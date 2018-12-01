@@ -1,0 +1,10 @@
+version: "0.0.1"
+
+targets:
+  dir1:
+    src: "./foo" 
+    dest: "./backups/foo"
+  dir2: 
+    src: "./bar" 
+    dest: "./backups/bar"
+    
