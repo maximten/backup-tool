@@ -5,6 +5,10 @@ targets:
     src: "./foo" 
     dest: "./backups/foo"
   dir2: 
-    src: "./bar" 
-    dest: "./backups/bar"
+    src: "/absolute/path/bar" 
+    dest: "/absolute/path/backups/bar"
+  dir3: 
+    src: "user@remote_host:/path/" 
+    dest: "../backups/remote"
+
     
