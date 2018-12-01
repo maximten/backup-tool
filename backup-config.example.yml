@@ -1,14 +1,20 @@
 version: "0.0.1"
-
+cron: "0 07 * * 1,3,5"
 targets:
   dir1:
     src: "./foo" 
     dest: "./backups/foo"
+    filename: "dir1_${datetime}.tar.gz"
+    datetimeFormat: "ddd"
   dir2: 
     src: "/absolute/path/bar" 
     dest: "/absolute/path/backups/bar"
+    filename: "dir2_${datetime}.tar.gz"
+    datetimeFormat: "ddd"
   dir3: 
     src: "user@remote_host:/path/" 
     dest: "../backups/remote"
+    filename: "dir3_${datetime}.tar.gz"
+    datetimeFormat: "ddd"
 
     

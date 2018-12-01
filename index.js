@@ -5,6 +5,7 @@ const chalk = require('chalk')
 const yaml = require('js-yaml')
 const validate = require('./lib/validate')
 const backup = require('./lib/backup')
+const cron = require('node-cron')
 
 const argv = yargs.help('help')
   .usage('Usage: node $0')
@@ -38,7 +39,13 @@ try {
 }
 
 try {
-  backup(config)
+  if (config.cron) {
+    cron.schedule(config.cron, () => {
+      backup(config)
+    })
+  } else {
+    backup(config)
+  }
 } catch (e) {
   console.error(chalk.red(e.message))
 }
