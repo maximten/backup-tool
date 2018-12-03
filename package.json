@@ -4,6 +4,9 @@
   "description": "backup automation tool",
   "version": "0.0.1",
   "license": "MIT",
+  "engines": {
+    "node": ">=10.12"
+  },
   "dependencies": {
     "chalk": "^2.4.1",
     "js-yaml": "^3.12.0",
