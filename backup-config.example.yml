@@ -19,6 +19,10 @@ targets:
     dest: "../backups/remote"
     filename: "dir3_${datetime}.tar.gz"
     datetimeFormat: "ddd"
+    ssh: 
+      port: 22
+      password: "secret"
+      privateKeyPath: "/home/user/.ssh/id_rsa"
   db1: 
     type: "database"
     dest: "../backups/db/db1/"
