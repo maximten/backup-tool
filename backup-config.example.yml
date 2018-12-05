@@ -27,18 +27,20 @@ targets:
     type: "database"
     dest: "../backups/db/db1/"
     host: "127.0.0.1" 
-    port: "3306" 
-    user: "root" 
-    password: "password" 
-    database: "db1" 
+    mysql:
+      port: 3306
+      user: "root" 
+      password: "root" 
+      database: "default"  
   db2: 
     type: "database"
     dest: "../backups/db/db2/"
     host: "user@remote_host" 
-    port: "3306" 
-    user: "root" 
-    password: "password" 
-    database: "db2" 
-
-
-    
+    ssh: 
+      port: 22
+      privateKeyPath: "/home/user/.ssh/id_rsa"
+    mysql:
+      port: 3306 
+      user: "root" 
+      password: "password" 
+      database: "db2" 
