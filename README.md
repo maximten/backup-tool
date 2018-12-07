@@ -37,7 +37,7 @@ targets:
       password: "secret"
       privateKeyPath: "/home/user/.ssh/id_rsa"
   db1: 
-    type: "database"
+    type: "mysql"
     dest: "../backups/db/db1/"
     host: "127.0.0.1" 
     mysql:
@@ -45,8 +45,10 @@ targets:
       user: "root" 
       password: "root" 
       database: "default"  
+    filename: "db1_${datetime}.sql"
+    datetimeFormat: "ddd"
   db2: 
-    type: "database"
+    type: "mysql"
     dest: "../backups/db/db2/"
     host: "user@remote_host" 
     ssh: 
@@ -57,4 +59,6 @@ targets:
       user: "root" 
       password: "password" 
       database: "db2" 
+    filename: "db2_${datetime}.sql"
+    datetimeFormat: "ddd"
 ```
