@@ -5,9 +5,10 @@
 Usage: node index.js
 
 Options:
-  --help, -h     Show help                                             [boolean]
-  --version, -v  Show version number                                   [boolean]
-  --file, -f     Specify config file     [string] [default: "backup-config.yml"]
+  --help, -h        Show help                                          [boolean]
+  --version, -v     Show version number                                [boolean]
+  --file, -f        Specify config file  [string] [default: "backup-config.yml"]
+  --sequential, -s  Turn on sequential order of execution [boolean] [default: false]
 ```
 ## Config file example
 ```

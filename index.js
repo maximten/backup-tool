@@ -16,6 +16,12 @@ const argv = yargs.help('help')
     string: true,
     default: 'backup-config.yml'
   })
+  .option('sequential', {
+    alias: 's',
+    description: 'Turn on sequential order of execution',
+    boolean: true,
+    default: false,
+  })
   .alias('help', 'h')
   .alias('version', 'v')
   .argv
@@ -39,12 +45,19 @@ try {
 }
 
 try {
+  const { sequential } = argv
   if (config.cron) {
     cron.schedule(config.cron, () => {
-      backup(config)
+      backup({
+        ...config,
+        sequential
+      })
     })
   } else {
-    backup(config)
+    backup({
+      ...config,
+      sequential
+    })
   }
 } catch (e) {
   console.error(chalk.red(e.message))
