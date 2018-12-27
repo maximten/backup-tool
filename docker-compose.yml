@@ -6,5 +6,6 @@ services:
     volumes:
       - ./backups:/etc/backups
       - ./src:/etc/worker
+      - ./ssh:/root/.ssh
     command: ./init.sh
     working_dir: /etc/worker
