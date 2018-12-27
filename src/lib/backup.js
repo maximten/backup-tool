@@ -219,46 +219,40 @@ const databaseArchivationOverSsh = async (params) => {
   }
 }
 
+const commandConstructor = (params) => {
+  const { type } = params
+  if (type === 'directory') {
+    const { src } = params
+    const isRemote = src.match(/.*@.*:.*/) !== null
+    if (isRemote) {
+      return remoteDirectoryArchivation
+    } else {
+      return localDirectoryArchivation
+    }
+  } else if (type === 'mysql') {
+    const { host } = params
+    const connectViaSsh = host.match(/.*@.*/) !== null
+    if (connectViaSsh) {
+      return databaseArchivationOverSsh
+    } else {
+      return databaseArchivation
+    }
+  }
+}
+
 const backup = async (config) => {
   const { targets, sequential } = config
   for (const target of Object.entries(targets)) {
     const [targetName, params] = target
-    const { type } = params
     const logger = new Logger(targetName)
     const fullParams = { targetName, logger, ...params }
 
-    if (type === 'directory') {
-      const { src } = params
-      const isRemote = src.match(/.*@.*:.*/) !== null
-      if (isRemote) {
-        if (sequential) {
-          await remoteDirectoryArchivation(fullParams)
-        } else {
-          remoteDirectoryArchivation(fullParams)
-        }
-      } else {
-        if (sequential) {
-          await localDirectoryArchivation(fullParams)
-        } else {
-          localDirectoryArchivation(fullParams)
-        }
-      }
-    } else if (type === 'mysql') {
-      const { host } = params
-      const connectViaSsh = host.match(/.*@.*/) !== null
-      if (connectViaSsh) {
-        if (sequential) {
-          await databaseArchivationOverSsh(fullParams)
-        } else {
-          databaseArchivationOverSsh(fullParams)
-        }
-      } else {
-        if (sequential) {
-          await databaseArchivation(fullParams)
-        } else {
-          databaseArchivation(fullParams)
-        }
-      }
+    const command = commandConstructor(params)
+
+    if (sequential) {
+      await command(fullParams)
+    } else {
+      command(fullParams)
     }
   }
 }
