@@ -82,6 +82,8 @@ const remoteDirectoryArchivation = async (params) => {
       password,
       privateKey
     })
+    logger.success(`successfully connected to ${host} as ${username}`)
+    logger.info(`creating ${fullRemoteTarPath} ...`)
     await exec(conn, archiveCommand)
     logger.success(`${fullRemoteTarPath} has been created`)
     await mkdir(destPath)
