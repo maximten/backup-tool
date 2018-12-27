@@ -1,0 +1,10 @@
+version: '3.2'
+
+services: 
+  worker:
+    image: node:10.15.0-alpine
+    volumes:
+      - ./backups:/etc/backups
+      - ./src:/etc/worker
+    command: ./init.sh
+    working_dir: /etc/worker

@@ -63,7 +63,7 @@ const remoteDirectoryArchivation = async (params) => {
   privateKeyPath = path.resolve( privateKeyPath || `${os.homedir()}/.ssh/id_rsa` )
 
   const [ fullMatch, username, host, remotePath ] = src.match(/(.*)@(.*):(.*)/)
-  const privateKey = fs.readFileSync(privateKeyPath)
+  const privateKey = fs.existsSync(privateKeyPath) && fs.readFileSync(privateKeyPath)
   
   const destPath = path.resolve(dest)
   const tarName = formTarName(remotePath, params)
