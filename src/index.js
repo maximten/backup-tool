@@ -44,14 +44,38 @@ try {
   process.exit(1)
 }
 
+class Queue {
+  constructor() {
+    this.queue = []
+    this.isJobRunning = false
+  }
+  run() {
+    if (!this.isJobRunning) {
+      this.isJobRunning = true
+      const job = this.queue.pop()
+      job().then(() => {
+        this.isJobRunning = false
+        this.run()
+      })
+    }
+  }
+  push(job) {
+    this.queue.push(job)
+  }
+}
+
 try {
   const { sequential } = argv
   if (config.cron) {
+    const queue = new Queue()
     cron.schedule(config.cron, () => {
-      backup({
-        ...config,
-        sequential
-      })
+      queue.push(() => (
+        backup({
+          ...config,
+          sequential
+        })
+      ))
+      queue.run()
     })
   } else {
     backup({

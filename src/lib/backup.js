@@ -242,6 +242,9 @@ const commandConstructor = (params) => {
 
 const backup = async (config) => {
   const { targets, sequential } = config
+
+  const promises = []
+
   for (const target of Object.entries(targets)) {
     const [targetName, params] = target
     const logger = new Logger(targetName)
@@ -252,8 +255,14 @@ const backup = async (config) => {
     if (sequential) {
       await command(fullParams)
     } else {
-      command(fullParams)
+      promises.push(command(fullParams))
     }
+  }
+
+  if (sequential) {
+    return true
+  } else {
+    return Promise.all(promises)
   }
 }
 
