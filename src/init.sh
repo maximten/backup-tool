@@ -1,3 +1,3 @@
 #!/bin/sh
 yarn install
-node index.js -s
+node index.js

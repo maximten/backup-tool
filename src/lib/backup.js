@@ -50,17 +50,11 @@ const remoteDirectoryArchivation = async (params) => {
     logger, 
     src, 
     dest,
-  } = params
-  let {
-    ssh: {
-      port,
-      password,
-      privateKeyPath  
-    }
+    ssh,
   } = params
 
-  port = port || 22
-  privateKeyPath = path.resolve( privateKeyPath || `${os.homedir()}/.ssh/id_rsa` )
+  port = (ssh && ssh.port) || 22
+  privateKeyPath = path.resolve((ssh && ssh.privateKeyPath) || `${os.homedir()}/.ssh/id_rsa` )
 
   const [ fullMatch, username, host, remotePath ] = src.match(/(.*)@(.*):(.*)/)
   const privateKey = fs.existsSync(privateKeyPath) && fs.readFileSync(privateKeyPath)
@@ -79,7 +73,7 @@ const remoteDirectoryArchivation = async (params) => {
       host,
       port,
       username,
-      password,
+      password: (ssh && ssh.password) || '',
       privateKey
     })
     logger.success(`successfully connected to ${host} as ${username}`)
@@ -178,13 +172,13 @@ const databaseArchivationOverSsh = async (params) => {
     mysql
   } = params
 
-  const sshPort = ssh.port || 22
-  const sshPassword = ssh.password
-  const privateKeyPath = ssh.privateKeyPath || `${os.homedir()}/.ssh/id_rsa`
+  const sshPort = (ssh && ssh.port) || 22
+  const sshPassword = (ssh && ssh.password) || ''
+  const privateKeyPath = (ssh && ssh.privateKeyPath) || `${os.homedir()}/.ssh/id_rsa`
 
-  const mysqlUser = mysql.user || 'root'
-  const mysqlPort = mysql.port || 3306
-  const mysqlDatabase = mysql.database
+  const mysqlUser = (mysql && mysql.user) || 'root'
+  const mysqlPort = (mysql && mysql.port) || 3306
+  const mysqlDatabase = (mysql && mysql.database)
 
   const [ fullMatch, sshUsername, sshHost ] = host.match(/(.*)@(.*)/)
   const privateKey = fs.readFileSync(privateKeyPath)
