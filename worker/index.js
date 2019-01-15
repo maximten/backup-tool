@@ -1,77 +1,26 @@
-const yargs = require('yargs')
-const fs = require('fs')
-const path = require('path')
 const chalk = require('chalk')
-const yaml = require('js-yaml')
-const validate = require('./lib/validate')
 const backup = require('./lib/backup')
 const cron = require('node-cron')
+const WorkerConfigConsoleReader = require('./src/WorkerConfigConsoleReader')
+const JobQueue = require('./src/JobQueue')
+const JobsListConfigFileReader = require('./src/JobsListConfigFileReader')
+const JobsListConfigValidator = require('./src/JobsListConfigValidator')
 
-const argv = yargs.help('help')
-  .usage('Usage: node $0')
-  .version('0.0.1')
-  .option('file', {
-    alias: 'f',
-    description: 'Specify config file',
-    string: true,
-    default: 'backup-config.yml'
-  })
-  .option('sequential', {
-    alias: 's',
-    description: 'Turn on sequential order of execution',
-    boolean: true,
-    default: false,
-  })
-  .alias('help', 'h')
-  .alias('version', 'v')
-  .argv
-
-let config = null
-try {
-  const { file } = argv
-  const filePath = path.resolve(file)
-  const content = fs.readFileSync(filePath, 'utf8')
-  config = yaml.safeLoad(content)
-} catch (e) {
-  console.error(chalk.red(e.message))
-  process.exit(1)
-}
+const WorkerConfigConsoleReaderInst = new WorkerConfigConsoleReader()
+const workerConfig = WorkerConfigConsoleReaderInst.getConfig()
+const JobsListConfigFileReaderInst = new JobsListConfigFileReader(workerConfig.file)
+const jobsListConfig = JobsListConfigFileReaderInst.getConfig()
+const JobsListConfigValidatorInst = new JobsListConfigValidator()
+JobsListConfigValidatorInst.validate(jobsListConfig)
 
 try {
-  validate(config)
-} catch (e) {
-  console.error(chalk.red(e.message))
-  process.exit(1)
-}
-
-class Queue {
-  constructor() {
-    this.queue = []
-    this.isJobRunning = false
-  }
-  run() {
-    if (!this.isJobRunning) {
-      this.isJobRunning = true
-      const job = this.queue.pop()
-      job().then(() => {
-        this.isJobRunning = false
-        this.run()
-      })
-    }
-  }
-  push(job) {
-    this.queue.push(job)
-  }
-}
-
-try {
-  const { sequential } = argv
-  if (config.cron) {
-    const queue = new Queue()
-    cron.schedule(config.cron, () => {
+  const { sequential } = jobsListConfig
+  if (jobsListConfig.cron) {
+    const queue = new JobQueue()
+    cron.schedule(jobsListConfig.cron, () => {
       queue.push(() => (
         backup({
-          ...config,
+          ...jobsListConfig,
           sequential
         })
       ))
@@ -79,7 +28,7 @@ try {
     })
   } else {
     backup({
-      ...config,
+      ...jobsListConfig,
       sequential
     })
   }
