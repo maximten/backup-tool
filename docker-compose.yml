@@ -5,7 +5,7 @@ services:
     image: node:10.15.0-alpine
     volumes:
       - ./backups:/etc/backups
-      - ./src:/etc/worker
+      - ./worker:/etc/worker
       - ./ssh:/root/.ssh
     command: ./init.sh
     working_dir: /etc/worker
