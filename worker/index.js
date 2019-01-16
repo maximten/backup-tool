@@ -1,37 +1,16 @@
-const chalk = require('chalk')
-const backup = require('./lib/backup')
-const cron = require('node-cron')
-const WorkerConfigConsoleReader = require('./src/WorkerConfigConsoleReader')
-const JobQueue = require('./src/JobQueue')
+const AppConfig = require('./src/AppConfig')
 const JobsListConfigFileReader = require('./src/JobsListConfigFileReader')
 const JobsListConfigValidator = require('./src/JobsListConfigValidator')
+const Worker = require('./src/Worker')
 
-const WorkerConfigConsoleReaderInst = new WorkerConfigConsoleReader()
-const workerConfig = WorkerConfigConsoleReaderInst.getConfig()
-const JobsListConfigFileReaderInst = new JobsListConfigFileReader(workerConfig.file)
-const jobsListConfig = JobsListConfigFileReaderInst.getConfig()
-const JobsListConfigValidatorInst = new JobsListConfigValidator()
-JobsListConfigValidatorInst.validate(jobsListConfig)
-
-try {
-  const { sequential } = jobsListConfig
-  if (jobsListConfig.cron) {
-    const queue = new JobQueue()
-    cron.schedule(jobsListConfig.cron, () => {
-      queue.push(() => (
-        backup({
-          ...jobsListConfig,
-          sequential
-        })
-      ))
-      queue.run()
-    })
-  } else {
-    backup({
-      ...jobsListConfig,
-      sequential
-    })
-  }
-} catch (e) {
-  console.error(chalk.red(e.message))
+const appConfig = new AppConfig()
+if (appConfig.isStandalone()) {
+  const jobsListConfigFile = appConfig.getJobsListConfigFile()
+  const jobsListConfigFileReader = new JobsListConfigFileReader(jobsListConfigFile)
+  const jobsListConfig = jobsListConfigFileReader.getConfig()
+  const jobsListConfigValidator = new JobsListConfigValidator()
+  jobsListConfigValidator.validate(jobsListConfig)
+  const worker = new Worker(jobsListConfig)
+  worker.run()
 }
+
