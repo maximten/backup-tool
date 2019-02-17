@@ -1,4 +1,4 @@
-class JobsListConfigValidator {
+class JobConfigValidator {
   validate(config) {
     if (typeof config.version === 'undefined') {
       throw new Error('No version in config file')
@@ -15,4 +15,4 @@ class JobsListConfigValidator {
   }
 }
 
-module.exports = JobsListConfigValidator
+module.exports = JobConfigValidator

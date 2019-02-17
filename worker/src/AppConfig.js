@@ -30,7 +30,7 @@ class AppConfig {
   isStandalone() {
     return !this.config.server
   }
-  getJobsListConfigFile() {
+  getJobConfigFile() {
     return this.config.file
   }
 }

@@ -1,7 +1,6 @@
 const cron = require('node-cron')
-const backup = require('../lib/backup')
 const JobQueue = require('./JobQueue')
-
+const Job = require('./Job')
 
 class Worker {
   constructor(jobsListConfig) {
@@ -12,16 +11,18 @@ class Worker {
     if (this.jobsListConfig.cron) {
       const queue = new JobQueue()
       cron.schedule(this.jobsListConfig.cron, () => {
-        queue.push(() => (
-          backup({
+        queue.push(() => {
+          const job = new Job()
+          job.run({
             ...this.jobsListConfig,
             sequential
           })
-        ))
+        })
         queue.run()
       })
     } else {
-      backup({
+      const job = new Job()
+      job.run({
         ...this.jobsListConfig,
         sequential
       })

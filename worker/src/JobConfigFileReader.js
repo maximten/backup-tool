@@ -2,7 +2,7 @@ const fs = require('fs')
 const path = require('path')
 const yaml = require('js-yaml')
 
-class JobsListConfigFileReader {
+class JobConfigFileReader {
   constructor(file) {
     this.file = file
   }
@@ -13,4 +13,4 @@ class JobsListConfigFileReader {
   }
 }
 
-module.exports = JobsListConfigFileReader 
+module.exports = JobConfigFileReader 
